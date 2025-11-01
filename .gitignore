@@ -1,0 +1,10 @@
+# report
+report/
+specification/
+
+
+
+# Environment
+.env
+.env.local
+
