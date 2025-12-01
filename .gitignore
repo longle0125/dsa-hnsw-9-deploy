@@ -1,13 +1,11 @@
-# report
-report/
-specification/
-# Virtual Environments
+# Ignore Python cache files
+__pycache__/
+
+# Ignore virtual environment directories
 env/
+
 venv/
 .venv/
+
+# Ignore environment variable files
 .env
-#
-__pycache__/
-face_recog.dlib_file/
-
-
