@@ -1,15 +1,13 @@
 # report
 report/
 specification/
-
-
-
-# Environment
+# Virtual Environments
+env/
+venv/
+.venv/
 .env
-env
-.env.local
 #
-__pycache__
-
+__pycache__/
+face_recog.dlib_file/
 
 
