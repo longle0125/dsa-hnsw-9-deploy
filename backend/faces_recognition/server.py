@@ -48,7 +48,7 @@ def decode_base64_image(base64_string):
 
 
 # --- API 1: UPLOAD FILE ẢNH (Test Postman) ---
-@app.route('/api/search_file', methods=['POST'])
+@app.route('/recognize_image', methods=['POST']) 
 def search_by_file():
     if 'file' not in request.files:
         return jsonify({"error": "Vui long gui kem file anh (key='file')"}), 400

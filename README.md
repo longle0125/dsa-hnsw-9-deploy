@@ -58,12 +58,12 @@ pip install -r requirements.txt
 ### Sử dụng thư viện hnswlib đã được chỉnh sửa
 ```
 # Di chuyển vào thư mục source code của thư viện
+cd backend
 cd hnswlib
-
 # Cài đặt thư viện vào môi trường hiện tại
 pip install .
-
 # Quay trở lại thư mục gốc dự án
+cd ..
 cd ..
 ```
 ### Để sử dụng thư viện face-recognition cho windows
