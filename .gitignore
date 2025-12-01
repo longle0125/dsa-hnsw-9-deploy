@@ -9,7 +9,7 @@ specification/
 env
 .env.local
 #
-_pycache_
+__pycache__
 
 
 
