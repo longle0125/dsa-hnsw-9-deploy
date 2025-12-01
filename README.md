@@ -40,14 +40,14 @@ git clone [https://github.com/longle0125/hnswlib.git](https://github.com/longle0
 cd hnswlib
 
 # 2. Tạo môi trường ảo với Python 3.8
-# (Đảm bảo bạn đã cài Python 3.8 trên máy)
-python -m venv venv
+# (Đảm bảo bạn đã cài Python 3.8 trên máy) 
+py -3.8 -m venv env
 
 # 3. Kích hoạt môi trường
 # - Trên Windows:
-venv\Scripts\activate
+env\Scripts\activate
 # - Trên Linux/Mac:
-source venv/bin/activate
+source env/bin/activate
 ```
 
 ### Sử dụng các thư viện cần thiết
