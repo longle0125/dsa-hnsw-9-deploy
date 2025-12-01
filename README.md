@@ -117,5 +117,5 @@ Bật API Backend để bắt đầu nhận diện.
 | Tên | MSSV | Vai trò |
 |----------|----------|----------|
 | Lê Hoàng Long| 2411915 | Backend |
-| Nguyễn Tiến Đạt| Row 2 Col 2 | Row 2 Col 3 |
-| Nguyễn Hoàng Minh | Row 2 Col 2 | Row 2 Col 3 |
+| Nguyễn Tiến Đạt| 2410712 | Frontend |
+| Nguyễn Hoàng Minh | 2412084 | Data |
