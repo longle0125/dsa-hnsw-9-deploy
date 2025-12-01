@@ -1,2 +1,14 @@
-hnswlib 
+# number
+numpy
+# demos
 gradio
+
+# Visualize
+matplotlib
+scipy
+# data base
+pymongo
+# nhận diện khuôn mặt
+opencv-python
+flask_cors
+flask

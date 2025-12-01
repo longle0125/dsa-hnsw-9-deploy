@@ -1,0 +1,121 @@
+# Face Recognition System with HNSW Search
+
+> Hệ thống nhận diện khuôn mặt và tìm kiếm vector tốc độ cao sử dụng thuật toán HNSW và MongoDB.
+
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![Flask](https://img.shields.io/badge/Flask-API-green)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-leaf)
+![Status](https://img.shields.io/badge/Status-Development-orange)
+
+## Giới thiệu
+
+Dự án này xây dựng một hệ thống định danh thời gian thực (Real-time Identification) với độ trễ thấp. Hệ thống kết hợp giữa **Face Recognition** (trích xuất đặc trưng khuôn mặt) và **HNSW** (Hierarchical Navigable Small World - thuật toán tìm kiếm láng giềng gần nhất) để truy vấn nhanh trên tập dữ liệu lớn.
+
+### Tính năng chính
+* **Data Pipeline:** Tự động quét, mã hóa khuôn mặt từ ảnh và đồng bộ metadata + vector lên MongoDB Atlas.
+* **Vector Search Engine:** Sử dụng HNSW để tìm kiếm khuôn mặt nhanh hơn và hiệu quả hơn phương pháp Brute-force truyền thống.
+* **API Service:** Backend Flask cung cấp API cho cả upload file và webcam streaming (Base64).
+* **Visualization:** Công cụ mô phỏng trực quan cách thuật toán HNSW hoạt động trên không gian 2D/3D.
+
+---
+
+## Kiến trúc Hệ thống
+
+```mermaid
+graph LR
+    A[Client/Webcam] -- Base64 Image --> B(Flask Server)
+    B -- Feature Extraction (dlib) --> C{HNSW Index (RAM)}
+    C -- Query Vector --> D[(MongoDB Metadata)]
+    D -- Info (Name/MSSV) --> B
+    B -- JSON Result --> A
+```
+## Hướng dẫn Cài đặt & Triển khai
+
+*Lưu ý: chỉ tương thích tốt nhất với Python 3.8. Vui lòng không sử dụng phiên bản khác để tránh lỗi thư viện face-recognition đã build sẵn.*
+
+### Cài đặt môi trường
+```
+# 1. Clone repository về máy
+git clone [https://github.com/longle0125/hnswlib.git](https://github.com/longle0125/hnswlib.git)
+cd hnswlib
+
+# 2. Tạo môi trường ảo với Python 3.8
+# (Đảm bảo bạn đã cài Python 3.8 trên máy)
+python -m venv venv
+
+# 3. Kích hoạt môi trường
+# - Trên Windows:
+venv\Scripts\activate
+# - Trên Linux/Mac:
+source venv/bin/activate
+```
+
+### Sử dụng các thư viện cần thiết
+```
+# Cài đặt các thư viện chung (Flask, Numpy, PyMongo, v.v.)
+pip install -r requirements.txt
+```
+### Sử dụng thư viện hnswlib đã được chỉnh sửa
+```
+# Di chuyển vào thư mục source code của thư viện
+cd hnswlib
+
+# Cài đặt thư viện vào môi trường hiện tại
+pip install .
+
+# Quay trở lại thư mục gốc dự án
+cd ..
+```
+### Để sử dụng thư viện face-recognition cho windows
+xem chi tiết ở https://www.geeksforgeeks.org/installation-guide/how-to-install-face-recognition-in-python-on-windows/
+
+## sử dụng
+### 1. Để nạp dữ liệu vào database
+```python import_data.py```
+### 2. Khởi động server
+Bật API Backend để bắt đầu nhận diện.
+```python server.py ```
+
+- Server sẽ chạy tại: http://localhost:5000
+
+- Sẵn sàng nhận request.
+
+## Chạy các demo
+### So sánh tốc độ (Benchmark):
+```python demos/benchmark.py```
+### Mô phỏng thuật toán (Visualize):
+```python demos/visualize.py```
+
+## API Documentation
+### 1. Nhận diện qua Webcam (Realtime)
+- URL: ```/api/search_base64```
+- Method: ```POST```
+- Content-Type: ```application/json```
+- Body:
+``` 
+{
+ "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..."
+}
+```
+- Response (Success):
+```
+{
+    "status": "found",
+    "distance": 0.35,
+    "info": {
+        "MSSV": "2011001",
+        "Ten": "Nguyen Van A"
+    },
+    "box": [100, 200, 300, 400]
+}
+```
+### 2. Nhận diện qua File ảnh
+- URL: ```/api/search_file```
+- Method: ```POST```
+- Body: ```form-data (key=file)```
+## 👥 Thành viên thực hiện
+| Tên | MSSV | Vai trò |
+|----------|----------|----------|
+| Lê Hoàng Long| 2411915 | Backend |
+| Nguyễn Tiến Đạt| Row 2 Col 2 | Row 2 Col 3 |
+| Nguyễn Hoàng Minh | Row 2 Col 2 | Row 2 Col 3 |
