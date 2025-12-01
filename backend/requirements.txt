@@ -1,14 +1,18 @@
-# number
-numpy
-# demos
-gradio
-
-# Visualize
-matplotlib
+# Core Libraries
+numpy<1.25.0
 scipy
-# data base
+matplotlib
+
+# Database
 pymongo
-# nhận diện khuôn mặt
-opencv-python
-flask_cors
+
+# Computer Vision & Face Recognition
+cmake
+dlib
+face-recognition
+opencv-python-headless  
+
+# Backend API
 flask
+flask-cors
+gunicorn
