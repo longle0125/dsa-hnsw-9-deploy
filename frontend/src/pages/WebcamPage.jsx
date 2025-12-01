@@ -1,55 +1,200 @@
-// src/components/WebcamPage.jsx
+// src/pages/WebcamPage.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { recognizeFrame } from "../services/api";
 import FaceBox from "../components/FaceBox";
 
-export default function WebcamPage() {
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
-    const [results, setResults] = useState([]);
+const WebcamPage = () => {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [results, setResults] = useState([]);
+  const [running, setRunning] = useState(true);
 
-    useEffect(() => {
-        async function initCamera() {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            videoRef.current.srcObject = stream;
+  // Khởi tạo webcam
+  useEffect(() => {
+    async function initCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
         }
-        initCamera();
-    }, []);
+      } catch (err) {
+        console.error(err);
+        alert("Không truy cập được webcam. Hãy kiểm tra quyền truy cập.");
+      }
+    }
+
+    initCamera();
+
+    // Tắt webcam khi rời trang
+    return () => {
+      const video = videoRef.current;
+      if (video && video.srcObject) {
+        video.srcObject.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, []);
+
+    // Gửi frame định kỳ
+    useEffect(() => {
+    if (!running) return;
+
+    const interval = setInterval(captureFrame, 100);
+    return () => clearInterval(interval);
 
     async function captureFrame() {
         const video = videoRef.current;
         const canvas = canvasRef.current;
+        if (!video || !canvas || video.readyState !== 4) return;
+
         const ctx = canvas.getContext("2d");
 
+        // Cập nhật kích thước canvas = kích thước video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
+        // Vẽ frame hiện tại của video lên canvas
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+        // Convert frame -> base64
         const base64Image = canvas.toDataURL("image/jpeg");
 
+        try {
         const res = await recognizeFrame(base64Image);
-        setResults(res.faces);
+        const faces = res?.faces || [];
+        setResults(faces);
+
+        // Vẽ khung cho từng khuôn mặt
+        ctx.strokeStyle = "#0d6efd";      // màu xanh dương
+        ctx.lineWidth = 2;
+        ctx.font = "12px system-ui";
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.textBaseline = "top";
+
+        faces.forEach((face) => {
+            const [top, right, bottom, left] = face.box; // theo style face_recognition
+            const width = right - left;
+            const height = bottom - top;
+
+            // Vẽ khung
+            ctx.strokeRect(left, top, width, height);
+
+            // Vẽ label tên + MSSV trên khung
+            const label =
+            (face.name || face.info?.Ten || "Unknown") +
+            (face.student_id || face.info?.MSSV ? ` (${face.student_id || face.info?.MSSV})` : "");
+
+            const textX = left;
+            const textY = top - 18 < 0 ? top + 2 : top - 18;
+
+            const textWidth = ctx.measureText(label).width + 6;
+            const textHeight = 16;
+
+            // Nền đen mờ phía sau chữ
+            ctx.fillRect(textX, textY, textWidth, textHeight);
+
+            // Chữ màu trắng
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(label, textX + 3, textY + 2);
+            ctx.fillStyle = "rgba(0,0,0,0.6)"; // set lại cho khung tiếp theo
+        });
+        } catch (err) {
+        console.error(err);
+        }
     }
+    }, [running]);
 
-    useEffect(() => {
-        const interval = setInterval(captureFrame, 800); // 0.8s mỗi frame
-        return () => clearInterval(interval);
-    }, []);
+  return (
+    <div className="d-flex flex-column min-vh-100 bg-dark text-light">
+      <main className="flex-grow-1 py-5">
+        <div className="container">
+          {/* Tiêu đề */}
+          <div className="mb-4">
+            <h2 className="h4 mb-1 text-light">Chế độ Camera trực tiếp</h2>
+            <p className="small text-light mb-0" style={{ opacity: 0.8 }}>
+              Hệ thống sẽ chụp khung hình định kỳ từ webcam và gửi lên backend để
+              nhận diện khuôn mặt theo thời gian thực.
+            </p>
+          </div>
 
-    return (
-        <div>
-            <h2>Nhận diện Webcam Real-time</h2>
+          <div className="row g-4">
+            {/* Webcam + controls */}
+            <div className="col-lg-7">
+              <div className="card bg-dark border-secondary">
+                <div className="card-body">
+                  <h5 className="card-title mb-3 text-light">Live Camera</h5>
 
-            <video ref={videoRef} autoPlay style={{ width: "500px" }}></video>
+                    <div className="mb-3 text-center position-relative">
+                    {/* video chỉ để lấy dữ liệu, không cần hiển thị */}
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        style={{ display: "none" }}
+                    />
 
-            <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+                    {/* canvas hiển thị hình + khung mặt */}
+                    <canvas
+                        ref={canvasRef}
+                        className="border border-secondary rounded w-100"
+                        style={{ maxHeight: 380, backgroundColor: "#000" }}
+                    />
+                    </div>
 
-            <div className="results">
-                {results.map((face, index) => (
-                    <FaceBox key={index} face={face} />
-                ))}
+                  <div className="d-flex gap-2">
+                    <button
+                      type="button"
+                      className={`btn btn-sm rounded-pill ${
+                        running ? "btn-outline-warning" : "btn-success"
+                      }`}
+                      onClick={() => setRunning((prev) => !prev)}
+                    >
+                      {running ? "Tạm dừng gửi frame" : "Tiếp tục nhận diện"}
+                    </button>
+                  </div>
+
+                  <p
+                    className="small mt-2 mb-0 text-light"
+                    style={{ opacity: 0.6 }}
+                  >
+                    * Khoảng mỗi 1 giây sẽ gửi một frame lên server. Tốc độ thực
+                    tế phụ thuộc cấu hình backend và mạng.
+                  </p>
+                </div>
+              </div>
             </div>
+
+            {/* Kết quả */}
+            <div className="col-lg-5">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <h5 className="mb-0 text-light">Kết quả hiện tại</h5>
+                <span className="small text-light" style={{ opacity: 0.7 }}>
+                  {results.length > 0
+                    ? `${results.length} khuôn mặt trong khung hình`
+                    : "Chưa có khuôn mặt nào"}
+                </span>
+              </div>
+
+              {results.length === 0 && (
+                <div className="alert alert-secondary py-2 small mb-3">
+                  Chưa nhận diện được khuôn mặt nào. Hãy nhìn thẳng vào camera,
+                  đứng gần hơn và đảm bảo ánh sáng đủ rõ.
+                </div>
+              )}
+
+              <div className="row g-3">
+                {results.map((face, index) => (
+                  <div key={index} className="col-12">
+                    <FaceBox face={face} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-    );
-}
+      </main>
+    </div>
+  );
+};
+
+export default WebcamPage;
