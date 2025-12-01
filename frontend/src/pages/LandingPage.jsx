@@ -2,90 +2,26 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import logoImg from "../assets/logo_dark_cyan.png";
+
 const LandingPage = () => {
   const year = new Date().getFullYear();
 
   return (
     <div className="d-flex flex-column min-vh-100 bg-dark text-light">
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary sticky-top">
-        <div className="container">
-          {/* Logo */}
-          <Link to="/" className="navbar-brand d-flex align-items-center">
-            <div
-              className="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white fw-bold me-2"
-              style={{ width: 32, height: 32, fontSize: 14 }}
-            >
-              FR
-            </div>
-            <div className="d-flex flex-column lh-1">
-              <span className="small text-uppercase text-muted fw-semibold">
-                FaceReco
-              </span>
-              <span className="small">HNSW Face Recognition</span>
-            </div>
-          </Link>
-
-          {/* Toggler (mobile) */}
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#mainNavbar"
-            aria-controls="mainNavbar"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon" />
-          </button>
-
-          {/* Links + status */}
-          <div className="collapse navbar-collapse" id="mainNavbar">
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0 me-3">
-              <li className="nav-item">
-                <Link to="/" className="nav-link active">
-                  Home
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/webcam" className="nav-link">
-                  Live Cam
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/upload" className="nav-link">
-                  Upload
-                </Link>
-              </li>
-            </ul>
-
-            {/* Status pill */}
-            <span className="badge rounded-pill bg-success-subtle text-success d-flex align-items-center gap-2 py-2 px-3">
-              <span
-                className="rounded-circle bg-success d-inline-block"
-                style={{ width: 8, height: 8 }}
-              />
-              <span className="small">Status: Server OK</span>
-            </span>
-          </div>
-        </div>
-      </nav>
-
       {/* Main content */}
       <main className="flex-grow-1 py-5">
         <div className="container">
           {/* Hero */}
           <section className="text-center mb-5">
-            <div className="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-4 bg-primary bg-gradient text-white shadow-lg"
-                 style={{ width: 72, height: 72, fontSize: 28 }}>
-              <i className="ti-target" />
-            </div>
             <h1 className="display-6 fw-bold mb-2">
-              Welcome to the <span className="text-primary">FaceReco</span> Project
+              Chào mừng đến với {" "}
+              <span className="text-primary">FaceReco</span>
             </h1>
-            <p className="text-muted mx-auto" style={{ maxWidth: 560 }}>
-              Identify individuals in real-time using your webcam, or analyze
-              uploaded images with our HNSW‑powered face recognition engine.
+            <p className="mx-auto" style={{ maxWidth: 600, opacity: 0.5 }}>
+              Hệ thống nhận diện khuôn mặt theo thời gian thực từ camera hoặc ảnh
+              tải lên, sử dụng thuật toán <strong>HNSW</strong> cho tìm kiếm
+              vector nhanh trên cơ sở dữ liệu sinh viên.
             </p>
           </section>
 
@@ -99,27 +35,44 @@ const LandingPage = () => {
                     <i className="ti-video-camera" />
                   </div>
                   <div>
-                    <h2 className="h5 mb-1">Live Webcam Mode</h2>
-                    <p className="text-muted small mb-0">
-                      Real-time detection from your browser camera.
+                    <h2 className="text-primary h5 mb-1">
+                      Chế độ Webcam
+                    </h2>
+                    <p
+                      className="text-light small mb-0"
+                      style={{ opacity: 0.5 }}
+                    >
+                      Nhận diện khuôn mặt trực tiếp từ camera trình duyệt.
                     </p>
                   </div>
                 </div>
 
-                <p className="text-muted small mb-3">
-                  Use your connected device for continuous face detection and
-                  recognition with low-latency HNSW vector search.
+                <p
+                  className="text-light small mb-3"
+                  style={{ opacity: 0.8 }}
+                >
+                  Sử dụng camera đang kết nối để liên tục phát hiện và nhận diện
+                  khuôn mặt, kết hợp tìm kiếm vector bằng HNSW với độ trễ thấp.
                 </p>
 
-                <ul className="text-muted small mb-4 ps-3">
-                  <li>Streaming frames directly from webcam.</li>
-                  <li>Bounding boxes &amp; labels overlay.</li>
-                  <li>Fast nearest-neighbor search via HNSW.</li>
+                <ul
+                  className="text-light small mb-4 ps-3"
+                  style={{ opacity: 0.8 }}
+                >
+                  <li>Streaming khung hình trực tiếp từ webcam.</li>
+                  <li>Hiển thị bounding box và nhãn tên sinh viên.</li>
+                  <li>
+                    Tìm kiếm láng giềng gần nhất bằng HNSW trên không gian
+                    embedding.
+                  </li>
                 </ul>
 
-                <Link to="/webcam" className="btn btn-primary rounded-pill">
+                <Link
+                  to="/webcam"
+                  className="btn btn-primary rounded-pill text-dark fw-semibold text-decoration-none"
+                >
                   <i className="ti-control-play me-1" />
-                  GO TO LIVE
+                  Webcam
                 </Link>
               </div>
             </div>
@@ -132,28 +85,42 @@ const LandingPage = () => {
                     <i className="ti-upload" />
                   </div>
                   <div>
-                    <h2 className="h5 mb-1">Upload Media Mode</h2>
-                    <p className="text-muted small mb-0">
-                      Analyze static images with multiple faces.
+                    <h2 className="text-info h5 mb-1">
+                      Chế độ Upload
+                    </h2>
+                    <p
+                      className="text-light small mb-0"
+                      style={{ opacity: 0.5 }}
+                    >
+                      Phân tích ảnh tĩnh chứa một hoặc nhiều khuôn mặt.
                     </p>
                   </div>
                 </div>
 
-                <p className="text-muted small mb-3">
-                  Upload captured frames or photos to detect all faces, match
-                  them against your student database, and inspect confidence
-                  scores.
+                <p
+                  className="text-light small mb-3"
+                  style={{ opacity: 0.8 }}
+                >
+                  Tải lên ảnh chụp để hệ thống phát hiện tất cả khuôn mặt xuất
+                  hiện, ánh xạ tới thông tin sinh viên tương ứng và hiển thị độ
+                  tương đồng.
                 </p>
 
-                <ul className="text-muted small mb-4 ps-3">
-                  <li>Supports multiple faces per image.</li>
-                  <li>Displays per‑match confidence scores.</li>
-                  <li>Graceful fallback when no student is found.</li>
+                <ul
+                  className="text-light small mb-4 ps-3"
+                  style={{ opacity: 0.8 }}
+                >
+                  <li>Hỗ trợ nhiều khuôn mặt trong một ảnh.</li>
+                  <li>Hiển thị MSSV, họ tên và distance (độ tương đồng).</li>
+                  <li>Thông báo rõ ràng khi không tìm thấy sinh viên phù hợp.</li>
                 </ul>
 
-                <Link to="/upload" className="btn btn-info rounded-pill text-dark fw-semibold">
+                <Link
+                  to="/upload"
+                  className="btn btn-info rounded-pill text-dark fw-semibold text-decoration-none"
+                >
                   <i className="ti-arrow-up me-1" />
-                  GO TO UPLOAD
+                  Upload
                 </Link>
               </div>
             </div>
@@ -162,8 +129,11 @@ const LandingPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-top border-secondary py-3 text-center text-muted small">
-        © {year} FaceReco Project · Built with React, Bootstrap 5 &amp; HNSW
+      <footer
+        className="border-top border-secondary py-3 text-center text-light small"
+        style={{ opacity: 0.5 }}
+      >
+        © {year} FaceReco Project · Xây dựng bằng Python, React, Bootstrap 5 &amp; HNSW
       </footer>
     </div>
   );
