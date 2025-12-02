@@ -14,10 +14,15 @@ try:
 except ImportError:
         print("[WARN] Không tìm thấy module 'hnsw'")
 
+from dotenv import load_dotenv
+load_dotenv()
+
 class FaceSearchEngine:
     def __init__(self):
         # Cấu hình MongoDB
-        self.uri = "mongodb+srv://data_team:ktmt@facereccluster.hjfd7ad.mongodb.net/?retryWrites=true&w=majority&appName=FaceRecCluster"
+        self.uri = os.getenv("MONGO_URI")
+        if not self.uri:
+             raise ValueError("Chưa cấu hình MONGO_URI trong file .env")
         self.client = MongoClient(self.uri)
         self.collection = self.client['FaceRecProject']['PeopleMetadata']
         

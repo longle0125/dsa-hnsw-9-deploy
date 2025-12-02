@@ -55,10 +55,6 @@ print(f"True Best Node: {true_best_id} at dist {true_best_dist:.4f}")
 # ==========================================
 # PCA PROJECTION 
 # ==========================================
-# If dim > 2, we project data to 2D using PCA so relative positions look better.
-# If dim == 2, we just use the data as is.
-
-# Combine data and query to find the best common plane
 all_points = np.vstack([data, query_point])
 data_mean = all_points.mean(axis=0)
 centered_data = all_points - data_mean

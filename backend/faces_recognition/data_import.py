@@ -2,8 +2,13 @@ import os
 import numpy as np
 from pymongo import MongoClient
 import face_recognition
+from dotenv import load_dotenv
 
-uri = "mongodb+srv://data_team:ktmt@facereccluster.hjfd7ad.mongodb.net/?retryWrites=true&w=majority&appName=FaceRecCluster"
+load_dotenv()
+uri = os.getenv("MONGO_URI")
+
+if not uri:
+    raise ValueError("Lỗi: Không tìm thấy biến MONGO_URI trong file .env")
 client = MongoClient(uri)
 db = client['FaceRecProject']
 collection = db['PeopleMetadata']
