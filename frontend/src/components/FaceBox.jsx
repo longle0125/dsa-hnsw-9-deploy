@@ -1,14 +1,35 @@
+// src/components/FaceBox.jsx
 import React from "react";
 
 const FaceBox = ({ face }) => {
-  // backend có thể trả crop_image hoặc image_url
-  const imgSrc = face.crop_image || face.image_url || null;
-  const mssv = face.student_id || face.mssv || "Không tìm thấy";
-  const name = face.name || "Unknown";
-  const distance =
+  const imgSrc =
+    face.imgSrc ||
+    face.crop_image ||
+    face.image_url ||
+    null;
+
+  const mssv =
+    face.mssv ||
+    face.student_id ||
+    face.info?.MSSV ||
+    "Không tìm thấy";
+
+  const name =
+    face.name ||
+    face.info?.Ten ||
+    "Unknown";
+
+  const rawDistance =
     typeof face.distance === "number"
-      ? face.distance.toFixed(3)
+      ? face.distance
+      : typeof face.similarity === "number"
+      ? face.similarity
       : face.distance;
+
+  const distance =
+    typeof rawDistance === "number"
+      ? rawDistance.toFixed(3)
+      : rawDistance;
 
   return (
     <div className="card bg-dark border-secondary h-100">
@@ -34,12 +55,12 @@ const FaceBox = ({ face }) => {
         <div className="col">
           <div className="card-body py-2 pe-3">
             <p className="mb-1 small">
-              <strong>MSSV:</strong> {mssv}
+              <strong>ID:</strong> {mssv}
             </p>
             <p className="mb-1 small">
               <strong>Tên:</strong> {name}
             </p>
-            {distance !== undefined && (
+            {distance !== undefined && distance !== null && (
               <p className="mb-0 small">
                 <strong>Độ tương đồng (distance):</strong> {distance}
               </p>
