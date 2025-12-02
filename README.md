@@ -18,17 +18,6 @@ Dự án này xây dựng một hệ thống định danh thời gian thực (Re
 * **Visualization:** Công cụ mô phỏng trực quan cách thuật toán HNSW hoạt động trên không gian 2D/3D.
 
 ---
-
-## Kiến trúc Hệ thống
-
-```mermaid
-graph LR
-    A[Client/Webcam] -- Base64 Image --> B(Flask Server)
-    B -- Feature Extraction (dlib) --> C{HNSW Index (RAM)}
-    C -- Query Vector --> D[(MongoDB Metadata)]
-    D -- Info (Name/MSSV) --> B
-    B -- JSON Result --> A
-```
 ## Hướng dẫn Cài đặt & Triển khai
 
 *Lưu ý: chỉ tương thích tốt nhất với Python 3.8. Vui lòng không sử dụng phiên bản khác để tránh lỗi thư viện face-recognition đã build sẵn.*
@@ -36,8 +25,8 @@ graph LR
 ### Cài đặt môi trường
 ```
 # 1. Clone repository về máy
-git clone [https://github.com/longle0125/hnswlib.git](https://github.com/longle0125/hnswlib.git)
-cd hnswlib
+git clone https://github.com/Dat-2536/dsa-hnsw-9.git
+
 
 # 2. Tạo môi trường ảo với Python 3.8
 # (Đảm bảo bạn đã cài Python 3.8 trên máy) 
@@ -53,16 +42,15 @@ source env/bin/activate
 ### Sử dụng các thư viện cần thiết
 ```
 # Cài đặt các thư viện chung (Flask, Numpy, PyMongo, v.v.)
+cd backend
 pip install -r requirements.txt
 ```
 ### Sử dụng thư viện hnswlib đã được chỉnh sửa
 ```
 # Di chuyển vào thư mục source code của thư viện
-cd backend
 cd hnswlib
 # Cài đặt thư viện vào môi trường hiện tại
-pip install .
-# Quay trở lại thư mục gốc dự án
+pip install 
 cd ..
 cd ..
 ```
@@ -71,15 +59,19 @@ xem chi tiết ở https://www.geeksforgeeks.org/installation-guide/how-to-insta
 
 ## sử dụng
 ### 1. Để nạp dữ liệu vào database
-```python import_data.py```
+```python data_import.py```
 ### 2. Khởi động server
 Bật API Backend để bắt đầu nhận diện.
 ```python server.py ```
 
-- Server sẽ chạy tại: http://localhost:5000
+- Server sẽ chạy tại: http://localhost:8000
 
 - Sẵn sàng nhận request.
 
+### 3. khởi động frontend
+- di chuyển đến thư mục frontend
+- npm run dev
+- truy cập vào địa chỉ ip
 ## Chạy các demo
 ### So sánh tốc độ (Benchmark):
 ```python demos/benchmark.py```
@@ -88,7 +80,7 @@ Bật API Backend để bắt đầu nhận diện.
 
 ## API Documentation
 ### 1. Nhận diện qua Webcam (Realtime)
-- URL: ```/api/search_base64```
+- URL: ```/recognize_frame```
 - Method: ```POST```
 - Content-Type: ```application/json```
 - Body:
@@ -100,19 +92,27 @@ Bật API Backend để bắt đầu nhận diện.
 - Response (Success):
 ```
 {
-    "status": "found",
-    "distance": 0.35,
-    "info": {
-        "MSSV": "2011001",
-        "Ten": "Nguyen Van A"
-    },
-    "box": [100, 200, 300, 400]
+    "faces": [
+        {
+            "student_id": "2011001",
+            "name": "Nguyen Van A",
+            "distance": 0.35,
+            "box": [100, 200, 300, 400],
+            "crop_image": ""
+        }
+    ]
 }
 ```
 ### 2. Nhận diện qua File ảnh
-- URL: ```/api/search_file```
+- URL: ```/recognize_image``
 - Method: ```POST```
 - Body: ```form-data (key=file)```
+
+## Google Colab
+- [Mô phỏng quá trình tìm kiếm sử dụng đồ thị HNSW](https://colab.research.google.com/drive/12AIafk-Fpl572KC7bbj-SmKZucqr3K7W?usp=sharing)
+
+- [So sánh giữa HNSW và Brute Force](https://colab.research.google.com/drive/1QEikK7hTZ6dJoA7pDZ_SpIHq9lGO_HW1#scrollTo=l2xGFl2BFzEk)
+- [Mô phỏng kết quả của việc truy vấn một vector ngẫu nhiên](https://colab.research.google.com/drive/1dWbGTWvKGRy7o77not6ntFy-LrmREYCj#scrollTo=BZ57eTlREtOW)
 ## 👥 Thành viên thực hiện
 | Tên | MSSV | Vai trò |
 |----------|----------|----------|

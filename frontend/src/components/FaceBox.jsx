@@ -34,7 +34,7 @@ const FaceBox = ({ face }) => {
         <div className="col">
           <div className="card-body py-2 pe-3">
             <p className="mb-1 small">
-              <strong>MSSV:</strong> {mssv}
+              <strong>id:</strong> {mssv}
             </p>
             <p className="mb-1 small">
               <strong>Tên:</strong> {name}

@@ -53,7 +53,7 @@ true_best_dist = all_distances[true_best_idx]
 print(f"True Best Node: {true_best_id} at dist {true_best_dist:.4f}")
 
 # ==========================================
-# PCA PROJECTION (The Fix for Visual Distortion)
+# PCA PROJECTION 
 # ==========================================
 # If dim > 2, we project data to 2D using PCA so relative positions look better.
 # If dim == 2, we just use the data as is.

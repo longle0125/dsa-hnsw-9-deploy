@@ -47,7 +47,7 @@ def decode_base64_image(base64_string):
         return None
 
 
-# --- API 1: UPLOAD FILE ẢNH (Test Postman) ---
+# --- API 1: UPLOAD FILE ẢNH ---
 @app.route('/recognize_image', methods=['POST']) 
 def search_by_file():
     if 'file' not in request.files:
@@ -61,20 +61,35 @@ def search_by_file():
         # Đọc ảnh trực tiếp từ file gửi lên
         image = face_recognition.load_image_file(file)
         
-        # 1. Tìm vị trí khuôn mặt (Dùng HOG cho nhanh)
+  
         face_locations = face_recognition.face_locations(image, model='hog')
         
         if len(face_locations) == 0:
-            return jsonify({"status": "failed", "message": "Khong tim thay mat nao"}), 200
+         
+            return jsonify({"faces": []}), 200
             
-        # 2. Encode khuôn mặt đầu tiên
+    
         face_encodings = face_recognition.face_encodings(image, face_locations)
-        query_vector = face_encodings[0]
         
-        # 3. Gọi HNSW để tìm
-        result = search_engine.search_face(query_vector)
+        results = []
+      
+        for i, query_vector in enumerate(face_encodings):
+            search_result = search_engine.search_face(query_vector)
+            
+            top, right, bottom, left = face_locations[i]
+            
+            # Chuẩn hóa dữ liệu trả về cho khớp với Frontend
+            face_data = {
+                "student_id": search_result['info'].get('MSSV', 'Unknown') if search_result['status'] == 'found' else 'Unknown',
+                "name": search_result['info'].get('Ten', 'Unknown') if search_result['status'] == 'found' else 'Unknown',
+                "distance": search_result.get('distance', 0),
+                "box": [top, right, bottom, left],
+                "crop_image": "" # Có thể thêm logic cắt ảnh base64 nếu muốn hiện crop
+            }
+            results.append(face_data)
         
-        return jsonify(result), 200
+        # Trả về đúng format {"faces": [...]} mà Frontend cần
+        return jsonify({"faces": results}), 200
 
     except Exception as e:
         print(f"[ERROR] Loi xu ly file: {e}")
@@ -82,8 +97,8 @@ def search_by_file():
 
 
 # --- API 2: NHẬN DIỆN REALTIME (Webcam) ---
-# Endpoint này nhận JSON chứa chuỗi base64
-@app.route('/recognize_frame', methods=['POST']) # [LƯU Ý] Đã đổi tên route cho khớp với frontend api.js
+
+@app.route('/recognize_frame', methods=['POST']) 
 def search_by_base64():
     data = request.get_json()
     if not data or 'image' not in data:
@@ -91,20 +106,20 @@ def search_by_base64():
 
     base64_str = data['image']
     
-    # 1. Giải mã ảnh
+
     image_rgb = decode_base64_image(base64_str)
     if image_rgb is None:
         return jsonify({"error": "Anh base64 loi"}), 400
 
     try:
-        # 2. Tìm mặt (Dùng model='hog' cho nhanh với CPU)
+
         face_locations = face_recognition.face_locations(image_rgb, model='hog')
         
         if len(face_locations) == 0:
-            # Trả về faces rỗng để frontend không báo lỗi
+   
             return jsonify({"faces": []}), 200
 
-        # 3. Encode mặt
+
         face_encodings = face_recognition.face_encodings(image_rgb, face_locations)
         
         results = []

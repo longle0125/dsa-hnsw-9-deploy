@@ -40,7 +40,7 @@ const WebcamPage = () => {
     useEffect(() => {
     if (!running) return;
 
-    const interval = setInterval(captureFrame, 100);
+    const interval = setInterval(captureFrame, 200);
     return () => clearInterval(interval);
 
     async function captureFrame() {
