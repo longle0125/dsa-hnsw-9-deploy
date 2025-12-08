@@ -1,10 +1,7 @@
-// src/pages/LandingPage.jsx
-import React from "react";
+// src/pages/HomePage.jsx
 import { Link } from "react-router-dom";
 
-import logoImg from "../assets/logo_dark_cyan.png";
-
-const LandingPage = () => {
+const HomePage = () => {
   const year = new Date().getFullYear();
 
   return (
@@ -13,15 +10,16 @@ const LandingPage = () => {
       <main className="flex-grow-1 py-5">
         <div className="container">
           {/* Hero */}
-          <section className="text-center mb-5">
+          <section className="text-center mb-4">
             <h1 className="display-6 fw-bold mb-2">
               Chào mừng đến với {" "}
-              <span className="text-primary">FaceReco</span>
+              <span className="text-primary">HNSW Face Recognition</span>
+              {" "} app
             </h1>
-            <p className="mx-auto" style={{ maxWidth: 600, opacity: 0.5 }}>
-              Hệ thống nhận diện khuôn mặt theo thời gian thực từ camera hoặc ảnh
-              tải lên, sử dụng thuật toán <strong>HNSW</strong> cho tìm kiếm
-              vector nhanh trên cơ sở dữ liệu sinh viên.
+            <p className="mx-auto" style={{ maxWidth: 700, opacity: 0.5 }}>
+              Ứng dụng thuật toán <strong>HNSW</strong> cho việc tìm kiếm vector
+              nhanh trên cơ sở dữ liệu khuôn mặt để xây dựng hệ thống nhận diện
+              theo thời gian thực thông qua webcam hoặc từ ảnh được tải lên.
             </p>
           </section>
 
@@ -133,10 +131,10 @@ const LandingPage = () => {
         className="border-top border-secondary py-3 text-center text-light small"
         style={{ opacity: 0.5 }}
       >
-        © {year} FaceReco Project · Xây dựng bằng Python, React, Bootstrap 5 &amp; HNSW
+        © {year} DSA HNSW Face Recognition Project · Xây dựng bằng Python, React, Bootstrap 5 &amp; HNSW
       </footer>
     </div>
   );
 };
 
-export default LandingPage;
+export default HomePage;

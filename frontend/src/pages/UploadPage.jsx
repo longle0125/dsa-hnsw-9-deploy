@@ -38,7 +38,7 @@ const UploadPage = () => {
 
   return (
     <div className="d-flex flex-column min-vh-100 bg-dark text-light">
-      <main className="flex-grow-1 py-5">
+      <main className="flex-grow-1 py-3">
         <div className="container">
           <div className="mb-4">
             <h2 className="h4 mb-1 text-light">Chế độ Upload</h2>
@@ -50,28 +50,41 @@ const UploadPage = () => {
 
           <div className="row g-4">
             {/* Upload & preview */}
-            <div className="col-lg-4">
+            <div className="col-lg-8">
               <div className="card bg-dark border-secondary h-100">
-                <div className="card-body">
+                <div className="card-body d-flex flex-column">
                   <h5 className="card-title mb-3 text-light">Chọn ảnh</h5>
 
-                  {/* Khung chọn tệp đẹp hơn */}
+                  {/* Khung chọn tệp lớn hơn */}
                   <div className="mb-3">
-                    <label className="form-label text-light mb-2" style={{ opacity: 0.8 }}>
+                    <label
+                      className="form-label text-light mb-2"
+                      style={{ opacity: 0.8 }}
+                    >
                       Tệp ảnh đầu vào
                     </label>
                     <div
-                      className="upload-dropzone d-flex flex-column justify-content-center align-items-center p-3 border border-secondary border-dashed rounded text-light text-center"
-                      style={{ cursor: "pointer", backgroundColor: "#15171b" }}
+                      className="upload-dropzone d-flex flex-column justify-content-center align-items-center p-4 border border-secondary border-dashed rounded text-light text-center"
+                      style={{
+                        cursor: "pointer",
+                        backgroundColor: "#15171b",
+                        minHeight: 220, // 🔥 to hơn, dễ click
+                      }}
                       onClick={() => fileInputRef.current?.click()}
                     >
-                      <i className="ti-image mb-2" style={{ fontSize: 24 }} />
-                      <span className="small text-light" style={{ opacity: 0.8 }}>
+                      <i className="ti-image mb-3" style={{ fontSize: 32 }} />
+                      <span
+                        className="small text-light mb-1"
+                        style={{ opacity: 0.8 }}
+                      >
                         {imageFile
                           ? `Đã chọn: ${imageFile.name}`
                           : "Nhấn để chọn ảnh từ máy của bạn"}
                       </span>
-                      <span className="small text-light" style={{ opacity: 0.5 }}>
+                      <span
+                        className="small text-light"
+                        style={{ opacity: 0.5 }}
+                      >
                         Hỗ trợ JPG, PNG, JPEG…
                       </span>
                     </div>
@@ -100,14 +113,17 @@ const UploadPage = () => {
 
                   <button
                     type="button"
-                    className="btn btn-primary w-100 rounded-pill fw-semibold"
+                    className="btn btn-primary w-100 rounded-pill fw-semibold mt-auto"
                     onClick={handleUpload}
                     disabled={!imageFile || loading}
                   >
                     {loading ? "Đang xử lý..." : "Nhận diện khuôn mặt"}
                   </button>
 
-                  <p className="small text-light mt-2 mb-0" style={{ opacity: 0.5 }}>
+                  <p
+                    className="small text-light mt-2 mb-0"
+                    style={{ opacity: 0.5 }}
+                  >
                     Ảnh có thể chứa nhiều khuôn mặt; kết quả chi tiết sẽ hiển thị
                     ở khung bên phải.
                   </p>
@@ -115,8 +131,8 @@ const UploadPage = () => {
               </div>
             </div>
 
-            {/* Results */}
-            <div className="col-lg-8">
+            {/* Results – GIẢM còn col-lg-4 */}
+            <div className="col-lg-4">
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h5 className="mb-0 text-light">Kết quả nhận diện</h5>
                 <span className="small text-light" style={{ opacity: 0.7 }}>

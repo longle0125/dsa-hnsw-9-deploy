@@ -17,6 +17,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  transition: ease-in-out 0.2s;
+}
+
 html,
 body {
   height: 100%;
@@ -43,7 +47,7 @@ a:hover {
   min-height: 100vh;
 }
 
-/* Card style tuỳ chỉnh cho 2 ô mode trên LandingPage */
+/* Card style tuỳ chỉnh cho 2 ô mode trên HomePage */
 .mode-card {
   background: radial-gradient(circle at top left, #111827, #020617);
   border-radius: 1rem;
