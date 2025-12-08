@@ -64,7 +64,7 @@ xem chi tiết ở https://www.geeksforgeeks.org/installation-guide/how-to-insta
 Bật API Backend để bắt đầu nhận diện.
 ```python server.py ```
 
-- Server sẽ chạy tại: http://localhost:8000
+- Server sẽ chạy tại: https://face-reco-api-2sjf.onrender.com
 
 - Sẵn sàng nhận request.
 
