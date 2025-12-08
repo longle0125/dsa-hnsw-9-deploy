@@ -7,5 +7,7 @@ env/
 venv/
 .venv/
 
+.vscode/
+
 # Ignore environment variable files
 .env

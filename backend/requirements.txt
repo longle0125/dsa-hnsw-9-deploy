@@ -1,18 +1,38 @@
-# Core Libraries
-numpy<1.25.0
+# Core Libraries - Numeric & Scientific Computing
+numpy
 scipy
 matplotlib
 
-# Database
+# Database & Configuration
 pymongo
+python-dotenv
 
-# Computer Vision & Face Recognition
-cmake
-dlib
+# Face Recognition Stack
 face-recognition
-opencv-python-headless  
+dlib
 
-# Backend API
-flask
-flask-cors
-gunicorn
+# Image & Computer Vision Processing
+opencv-python
+Pillow
+requests
+
+# Vector Search & HNSW
+hnswlib
+
+# Backend API & Web Framework
+Flask
+Flask-Cors
+waitress
+
+# Interactive UI & Demos
+gradio
+
+# Data Processing & ML Utilities
+datasets
+scikit-learn
+
+# Build & Compilation Tools
+cmake
+pybind11
+setuptools
+build

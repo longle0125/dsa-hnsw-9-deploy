@@ -157,7 +157,7 @@ const UploadPage = () => {
 
               <div className="row g-3">
                 {results.map((face, index) => (
-                  <div key={index} className="col-sm-6 col-md-4">
+                  <div key={index} className="col-sm-6 col-md-12">
                     <FaceBox face={face} />
                   </div>
                 ))}
