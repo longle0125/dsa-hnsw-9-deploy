@@ -63,9 +63,7 @@ const WebcamPage = () => {
       try {
         const res = await recognizeFrame(base64Image);
 
-        // Chuẩn hoá dữ liệu khuôn mặt:
-        // Nếu backend trả về: { status, distance, info, box }
-        // hoặc: { faces: [...] }
+        // Chuẩn hoá dữ liệu khuôn mặt
         let rawFaces = [];
 
         if (Array.isArray(res?.faces)) {
@@ -95,7 +93,6 @@ const WebcamPage = () => {
               ? res.distance
               : face.distance;
 
-          // Ưu tiên crop_image/image_url nếu backend trả về
           let imgSrc = face.imgSrc || face.crop_image || face.image_url || null;
 
           // Nếu chưa có imgSrc mà có box → crop từ canvas
@@ -181,8 +178,8 @@ const WebcamPage = () => {
   }, [running]);
 
   return (
-    <div className="d-flex flex-column min-vh-100 bg-dark text-light">
-      <main className="flex-grow-1 py-5">
+    <div className="d-flex flex-column min-vh-90 bg-dark text-light">
+      <main className="flex-grow-1 py-3">
         <div className="container">
           <div className="mb-4">
             <h2 className="h4 mb-1 text-light">Chế độ Camera trực tiếp</h2>
@@ -193,8 +190,8 @@ const WebcamPage = () => {
           </div>
 
           <div className="row g-4">
-            {/* Khung webcam */}
-            <div className="col-lg-7">
+            {/* Khung webcam – TĂNG LÊN col-lg-8 */}
+            <div className="col-lg-8">
               <div className="card bg-dark border-secondary">
                 <div className="card-body">
                   <h5 className="card-title mb-3 text-light">Live Camera</h5>
@@ -210,7 +207,8 @@ const WebcamPage = () => {
                       ref={canvasRef}
                       className="border border-secondary rounded w-100"
                       style={{
-                        maxHeight: 380,
+                        height: "480px",
+                        maxHeight: "70vh",
                         backgroundColor: "#000",
                       }}
                     />
@@ -239,8 +237,8 @@ const WebcamPage = () => {
               </div>
             </div>
 
-            {/* Kết quả FaceBox */}
-            <div className="col-lg-5">
+            {/* Kết quả FaceBox – GIẢM còn col-lg-4 */}
+            <div className="col-lg-4">
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h5 className="mb-0 text-light">Kết quả hiện tại</h5>
                 <span className="small text-light" style={{ opacity: 0.7 }}>

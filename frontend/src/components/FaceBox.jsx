@@ -44,8 +44,8 @@ const FaceBox = ({ face }) => {
             />
           ) : (
             <div
-              className="d-flex align-items-center justify-content-center rounded-start m-2 bg-secondary bg-opacity-25 border border-secondary text-light"
-              style={{ width: 80, height: 80, fontSize: 28, opacity: 0.8 }}
+              className="d-flex align-items-center justify-content-center rounded-start m-2 bg-secondary bg-opacity-25 border border-secondary"
+              style={{ width: 80, height: 80, fontSize: 28 }}
             >
               <i className="ti-user" />
             </div>
@@ -54,14 +54,14 @@ const FaceBox = ({ face }) => {
 
         <div className="col">
           <div className="card-body py-2 pe-3">
-            <p className="mb-1 small">
+            <p className="mb-1 small text-light">
               <strong>ID:</strong> {mssv}
             </p>
-            <p className="mb-1 small">
+            <p className="mb-1 small text-light">
               <strong>Tên:</strong> {name}
             </p>
             {distance !== undefined && distance !== null && (
-              <p className="mb-0 small">
+              <p className="mb-0 small text-light">
                 <strong>Độ tương đồng (distance):</strong> {distance}
               </p>
             )}
