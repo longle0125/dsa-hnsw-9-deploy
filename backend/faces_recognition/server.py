@@ -21,7 +21,7 @@ try:
     # Load dữ liệu từ Mongo và xây cây HNSW ngay khi Server bật
     search_engine.load_data_and_build_index()
     # [UPDATED] Đổi thông báo port thành 8000
-    print("[SUCCESS] Server da san sang phuc vu tai http://127.0.0.1:8000")
+    print("[SUCCESS] Server da san sang phuc vu tai http://localhost:8000")
 except Exception as e:
     print(f"[ERROR] LOI NGHIEM TRONG: Khong the khoi dong HNSW. Chi tiet: {e}")
 
@@ -66,7 +66,7 @@ def crop_face_to_base64(image_rgb, top, right, bottom, left):
         return ""
 
 # --- API 1: UPLOAD FILE ẢNH ---
-@app.route('/recognize_image', methods=['POST']) 
+@app.route('/hnsw/recognize_image', methods=['POST']) 
 def search_by_file():
     if 'file' not in request.files:
         return jsonify({"error": "Vui long gui kem file anh (key='file')"}), 400
@@ -119,7 +119,7 @@ def search_by_file():
 
 
 # --- API 2: NHẬN DIỆN REALTIME (WEBCAM) ---
-@app.route('/recognize_frame', methods=['POST']) 
+@app.route('/hnsw/recognize_frame', methods=['POST']) 
 def search_by_base64():
     # 1. Lấy dữ liệu JSON
     data = request.get_json()

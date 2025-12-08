@@ -21,5 +21,5 @@ COPY backend/ backend/
 
 EXPOSE 8000
 
-# Image này dùng python3, ta gọi gunicorn
-CMD ["gunicorn", "--chdir", "backend/faces_recognition", "--bind", "0.0.0.0:8000", "server:app"]
+# Image này dùng python3, ta gọi waitress
+CMD ["waitress", "--chdir", "backend/faces_recognition", "--bind", "0.0.0.0:8000", "server:app"]
