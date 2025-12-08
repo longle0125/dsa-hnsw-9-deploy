@@ -1,35 +1,55 @@
 // src/components/FaceBox.jsx
 import React from "react";
 
-const FaceBox = ({ face }) => {
-  const imgSrc =
-    face.imgSrc ||
-    face.crop_image ||
-    face.image_url ||
-    null;
+// Hàm helper: convert distance -> similarity %
+function distanceToSimilarity(distance, maxDistance = 0.5) {
+  if (typeof distance !== "number" || Number.isNaN(distance)) {
+    return 0;
+  }
 
-  const mssv =
-    face.mssv ||
+  // similarity = 1 - d / d_max  (clamp 0..1)
+  const score = 1 - distance / maxDistance;
+  const clamped = Math.max(0, Math.min(1, score));
+  return Math.round(clamped * 100); // trả về % nguyên, ví dụ 87
+}
+
+const FaceBox = ({ face }) => {
+  // Ảnh mặt cắt ra từ backend (upload / webcam)
+  const imgSrc = face.crop_image || face.image_url || face.imgSrc || null;
+
+  // Lấy distance “thật”
+  let rawDistance;
+  if (typeof face.distance === "number") {
+    rawDistance = face.distance;
+  } else if (typeof face.distance === "string") {
+    const parsed = Number(face.distance);
+    rawDistance = Number.isNaN(parsed) ? undefined : parsed;
+  }
+
+  const similarity = distanceToSimilarity(rawDistance); // 0–100 (%)
+
+  // Lấy MSSV / Tên từ backend nếu có
+  let mssv =
     face.student_id ||
+    face.mssv ||
     face.info?.MSSV ||
     "Không tìm thấy";
 
-  const name =
+  let name =
     face.name ||
     face.info?.Ten ||
     "Unknown";
 
-  const rawDistance =
-    typeof face.distance === "number"
-      ? face.distance
-      : typeof face.similarity === "number"
-      ? face.similarity
-      : face.distance;
+  // ❗ Nếu độ tương đồng = 0% → coi như không nhận ra
+  if (similarity === 0) {
+    mssv = "Unknown";
+    name = "Unknown";
+  }
 
-  const distance =
-    typeof rawDistance === "number"
+  const distanceText =
+    typeof rawDistance === "number" && !Number.isNaN(rawDistance)
       ? rawDistance.toFixed(3)
-      : rawDistance;
+      : undefined;
 
   return (
     <div className="card bg-dark border-secondary h-100">
@@ -44,7 +64,7 @@ const FaceBox = ({ face }) => {
             />
           ) : (
             <div
-              className="d-flex align-items-center justify-content-center rounded-start m-2 bg-secondary bg-opacity-25 border border-secondary"
+              className="d-flex align-items-center justify-content-center rounded-start m-2 bg-secondary bg-opacity-25 border border-secondary text-muted"
               style={{ width: 80, height: 80, fontSize: 28 }}
             >
               <i className="ti-user" />
@@ -54,15 +74,24 @@ const FaceBox = ({ face }) => {
 
         <div className="col">
           <div className="card-body py-2 pe-3">
-            <p className="mb-1 small text-light">
+            <p className="mb-1 small text-light" style={{ opacity: 0.8 }}>
               <strong>ID:</strong> {mssv}
             </p>
-            <p className="mb-1 small text-light">
+            <p className="mb-1 small text-light" style={{ opacity: 0.8 }}>
               <strong>Tên:</strong> {name}
             </p>
-            {distance !== undefined && distance !== null && (
-              <p className="mb-0 small text-light">
-                <strong>Độ tương đồng (distance):</strong> {distance}
+
+            {/* Hiển thị độ tương đồng */}
+            {similarity !== undefined && (
+              <p className="mb-1 small text-light" style={{ opacity: 0.8 }}>
+                <strong>Độ tương đồng:</strong> {similarity}%
+              </p>
+            )}
+
+            {/* Optional: vẫn hiển thị distance để debug */}
+            {distanceText && (
+              <p className="mb-0 small text-light" style={{ opacity: 0.8 }}>
+                <strong>Distance:</strong> {distanceText}
               </p>
             )}
           </div>

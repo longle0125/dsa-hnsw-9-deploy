@@ -40,7 +40,7 @@ const WebcamPage = () => {
   useEffect(() => {
     if (!running) return;
 
-    const interval = setInterval(captureFrame, 1000); // 0.8s/frame cho đỡ nặng
+    const interval = setInterval(captureFrame, 800); // 0.8s/frame cho đỡ nặng
     return () => clearInterval(interval);
 
     async function captureFrame() {
