@@ -22,4 +22,4 @@ COPY backend/ backend/
 EXPOSE 8000
 
 # Image này dùng python3, ta gọi waitress
-CMD ["waitress", "--chdir", "backend/faces_recognition", "--bind", "0.0.0.0:8000", "server:app"]
+CMD ["waitress", "--chdir", "backend", "--bind", "0.0.0.0:8000", "app:app"]

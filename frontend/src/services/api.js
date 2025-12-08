@@ -1,5 +1,6 @@
 // src/services/api.js
-const API_BASE = "http://localhost:8000"; // chỉnh lại nếu bạn dùng port khác
+// Remote backend URL (Render): change to the deployed backend
+const API_BASE = "https://face-reco-api-2sjf.onrender.com"; // chỉnh lại nếu bạn dùng port khác
 
 function getSearchMode() {
   const mode = window.localStorage.getItem("searchMode");
