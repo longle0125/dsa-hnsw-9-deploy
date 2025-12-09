@@ -35,7 +35,7 @@ const Navbar = () => {
             style={{ width: 64, height: 32 }}
           />
           <div className="d-flex flex-column lh-1">
-            <span className="small text-uppercase fw-semibold">HNSW</span>
+            <span className="small text-uppercase fw-semibold text-info">HNSW</span>
             <span className="small">Face Recognition</span>
           </div>
         </Link>

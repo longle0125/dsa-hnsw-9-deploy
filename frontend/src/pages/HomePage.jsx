@@ -12,9 +12,12 @@ const HomePage = () => {
           {/* Hero */}
           <section className="text-center mb-4">
             <h1 className="display-6 fw-bold mb-2">
-              Chào mừng đến với {" "}
-              <span className="text-primary">HNSW Face Recognition</span>
-              {" "} app
+              {/* Hệ thống Nhận diện Khuôn mặt */}
+            </h1>
+            <h1>
+              <span className="text-info">HNSW</span>
+              {" "}
+              <span className="">Face Recognition</span>
             </h1>
             <p className="mx-auto" style={{ maxWidth: 700, opacity: 0.5 }}>
               Ứng dụng thuật toán <strong>HNSW</strong> cho việc tìm kiếm vector
