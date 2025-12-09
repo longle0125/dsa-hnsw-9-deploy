@@ -1,20 +1,185 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi" data-bs-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="http://yoursite.com/themify-icons.css" rel="stylesheet">
-
-    <!-- http://getbootstrap.com/docs/5.3/ -->
+    <title>HNSW Face Recognition Project</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-    <title>Face Recognition App</title>
-    <script type="module" crossorigin src="/assets/index-D3vDYqVv.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Cb0VUn2S.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css">
+    
+    <style>
+        :root {
+            --primary-color: #0dcaf0; /* Cyan matching your logo */
+        }
+        body {
+            background-color: #15171b; /* Dark background similar to your app */
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .hero-section {
+            padding: 80px 0;
+            background: linear-gradient(180deg, rgba(21,23,27,0.9) 0%, rgba(13,202,240,0.05) 100%);
+            border-bottom: 1px solid #2d3035;
+        }
+        .feature-card {
+            background-color: #212529;
+            border: 1px solid #343a40;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+        .btn-glow {
+            box-shadow: 0 0 15px rgba(13, 202, 240, 0.4);
+            transition: box-shadow 0.3s ease;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 25px rgba(13, 202, 240, 0.6);
+        }
+        .badge-custom {
+            font-weight: 500;
+            padding: 8px 12px;
+        }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary sticky-top">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <div class="d-flex flex-column lh-1">
+            <span class="small text-uppercase fw-semibold text-info">HNSW</span>
+            <span class="small">Face Recognition</span>
+          </div>
+        </a>
+        <div class="ms-auto">
+            <a href="https://github.com/Dat-2536/dsa-hnsw-9" target="_blank" class="btn btn-outline-light btn-sm">
+                <i class="ti-github me-1"></i> View Code
+            </a>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero-section text-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- <span class="badge bg-info text-dark mb-3">DSA Honors Program - Project 2025</span> -->
+                    <h1 class="display-4 fw-bold mb-4">
+                      <span class="text-info">HNSW</span>
+                      <!-- <br>  -->
+                      Face Recognition
+                    </h1>
+                    <p class="lead text-secondary mb-4">
+                        Ứng dụng của thuật toán <strong>HNSW (Hierarchical Navigable Small World)</strong> cho khả năng tìm kiếm vector thời gian thực, nhờ đó nhận diện khuôn mặt với tốc độ cao.
+                    </p>
+                    <p class="lead text-secondary mb-5">
+                        Chế độ Brute-force giúp so sánh trực tiếp với HNSW về hiệu năng và độ chính xác trong việc nhận diện khuôn mặt.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="https://dsa-hnsw-9.vercel.app" target="_blank" class="btn btn-info btn-lg text-dark fw-bold btn-glow px-5 py-3 rounded-pill">
+                            <i class="ti-rocket me-2"></i> Trải nghiệm Ứng dụng
+                        </a>
+                    </div>
+                    <p class="small text-muted mt-4">
+                        *Hỗ trợ Webcam và Upload ảnh
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4 mb-5">
+                <div class="col-12">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body p-4">
+                            <h3 class="card-title text-light mb-3"><i class="ti-info-alt text-info me-2"></i>Tổng quan</h3>
+                            <p class="card-text text-light opacity-75">
+                                Dự án này xây dựng một hệ thống nhận diện khuôn mặt end-to-end. Thay vì sử dụng phương pháp so khớp tuyến tính (Brute-force) truyền thống tốn kém tài nguyên, chúng tôi áp dụng cấu trúc dữ liệu đồ thị <strong>HNSW</strong> để tìm kiếm vector láng giềng gần nhất (ANN), giúp hệ thống có khả năng mở rộng với dữ liệu lớn mà vẫn giữ độ trễ thấp.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <span class="badge bg-primary badge-custom"><i class="ti-loop me-1"></i> HNSW vector search</span>
+                                <span class="badge bg-success badge-custom"><i class="ti-face-smile me-1"></i> Real-time ID</span>
+                                <span class="badge bg-light text-dark badge-custom"><i class="ti-layers-alt me-1"></i> React & Flask</span>
+                                <span class="badge bg-secondary badge-custom"><i class="ti-harddrives me-1"></i> MongoDB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body p-4">
+                            <h4 class="card-title text-info mb-3"><i class="ti-bolt me-2"></i>Tính năng chính</h4>
+                            <ul class="text-light opacity-75">
+                                <li class="mb-2">Nhận diện khuôn mặt realtime qua Webcam.</li>
+                                <li class="mb-2">Hỗ trợ upload ảnh để tìm kiếm trong CSDL.</li>
+                                <li class="mb-2">So sánh hiệu năng giữa HNSW và Brute-force.</li>
+                                <li class="mb-2">Quản lý Metadata sinh viên (MSSV, Tên) qua MongoDB.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card feature-card h-100">
+                        <div class="card-body p-4">
+                            <h4 class="card-title text-info mb-3"><i class="ti-direction-alt me-2"></i>Luồng xử lý</h4>
+                            <ol class="text-light opacity-75">
+                                <li class="mb-2">Client gửi ảnh (Base64/File) lên API.</li>
+                                <li class="mb-2">Server dùng <code>face_recognition</code> để encode ra vector 128 chiều.</li>
+                                <li class="mb-2">Thuật toán HNSW duyệt đồ thị để tìm vector tương đồng nhất.</li>
+                                <li class="mb-2">Trả về thông tin sinh viên và độ tin cậy.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <h3 class="text-center mb-4 text-uppercase fw-bold text-light">Nhóm thực hiện</h3>
+                <div class="card bg-dark border-secondary">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover mb-0 align-middle text-center">
+                                <thead class="table-active">
+                                    <tr>
+                                        <th class="py-3">Họ và Tên</th>
+                                        <th class="py-3">MSSV</th>
+                                        <th class="py-3">Vai trò</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold text-info">Lê Hoàng Long</td>
+                                        <td>2411915</td>
+                                        <td><span class="badge bg-danger">Backend</span> HNSW & API</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-info">Nguyễn Tiến Đạt</td>
+                                        <td>2410712</td>
+                                        <td><span class="badge bg-primary">Frontend</span> Web Interface</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-info">Nguyễn Hoàng Minh</td>
+                                        <td>2412084</td>
+                                        <td><span class="badge bg-success">Data</span> Pipeline & MongoDB</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-secondary mt-3 small">
+                    Dự án thuộc môn <strong>Data Structures & Algorithms</strong> – Chương trình Tài năng (Honors Program) - HCMUT.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
 </html>
