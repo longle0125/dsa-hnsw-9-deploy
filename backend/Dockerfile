@@ -28,8 +28,8 @@ RUN pip install gunicorn
 COPY . .
 
 # 7. Mở port 10000 (Render thường thích port này hoặc bạn cấu hình sau)
-EXPOSE 10000
+EXPOSE 8000
 
 # 8. Lệnh chạy server (Quan trọng)
 # app:app nghĩa là: file app.py, tìm biến tên là app (biến Flask)
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:10000", "app:app"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:8000", "app:app"]
