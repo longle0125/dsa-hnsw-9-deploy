@@ -22,7 +22,7 @@ search_engine = FaceSearchEngine()
 try:
     # Load dữ liệu từ Mongo và xây cây HNSW ngay khi Server bật
     search_engine.load_data_and_build_index()
-    print("[SUCCESS] Server da san sang phuc vu tai https://face-reco-api-2sjf.onrender.com")
+    print("[SUCCESS] Server da san sang phuc vu tai http://localhost:8000")
 except Exception as e:
     print(f"[ERROR] LOI NGHIEM TRONG: Khong the khoi dong HNSW. Chi tiet: {e}")
 

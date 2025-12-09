@@ -9,5 +9,5 @@ venv/
 #
 __pycache__/
 face_recog.dlib_file/
-
+Face_Recognition_Project/
 
