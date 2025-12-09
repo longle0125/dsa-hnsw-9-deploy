@@ -1,6 +1,6 @@
 // src/services/api.js
 // get from .env file
-const API_BASE = process.env.BACKEND_URL || "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
 function getSearchMode() {
   const mode = window.localStorage.getItem("searchMode");
