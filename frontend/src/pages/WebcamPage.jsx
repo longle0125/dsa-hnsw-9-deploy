@@ -5,16 +5,20 @@ import FaceBox from "../components/FaceBox";
 
 const WebcamPage = () => {
   const videoRef = useRef(null);
-  const canvasRef = useRef(null);
+  const overlayRef = useRef(null); // Canvas phủ lên để vẽ khung
   const [results, setResults] = useState([]);
   const [running, setRunning] = useState(true);
 
-  // Khởi tạo webcam
+  // 1. Khởi động Webcam
   useEffect(() => {
     async function initCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: {
+            // Không set cứng width/height -> để trình duyệt tự chọn tốt nhất cho thiết bị
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
         });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -27,7 +31,7 @@ const WebcamPage = () => {
 
     initCamera();
 
-    // Tắt webcam khi rời trang
+    // Cleanup
     return () => {
       const video = videoRef.current;
       if (video && video.srcObject) {
@@ -36,36 +40,35 @@ const WebcamPage = () => {
     };
   }, []);
 
-  // Gửi frame định kỳ lên backend
+  // 2. Vòng lặp gửi API (Xử lý ngầm, không ảnh hưởng hiển thị)
   useEffect(() => {
     if (!running) return;
 
-    const interval = setInterval(captureFrame, 800); // 0.8s/frame cho đỡ nặng
+    const interval = setInterval(captureAndSendFrame, 800);
     return () => clearInterval(interval);
 
-    async function captureFrame() {
+    async function captureAndSendFrame() {
       const video = videoRef.current;
-      const canvas = canvasRef.current;
-      if (!video || !canvas || video.readyState !== 4) return;
+      // Chỉ chụp khi video đã sẵn sàng và có kích thước
+      if (!video || video.readyState !== 4 || video.videoWidth === 0) return;
 
-      const ctx = canvas.getContext("2d");
+      // Tạo canvas ảo để chụp frame gửi đi
+      const offscreenCanvas = document.createElement("canvas");
+      offscreenCanvas.width = video.videoWidth;
+      offscreenCanvas.height = video.videoHeight;
+      const ctx = offscreenCanvas.getContext("2d");
 
-      // Kích thước canvas = kích thước video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      // Vẽ frame gốc vào canvas ảo
+      ctx.drawImage(video, 0, 0);
 
-      // Vẽ frame hiện tại lên canvas
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // Convert frame → base64
-      const base64Image = canvas.toDataURL("image/jpeg");
+      // Nén ảnh JPEG 0.7
+      const base64Image = offscreenCanvas.toDataURL("image/jpeg", 0.7);
 
       try {
         const res = await recognizeFrame(base64Image);
 
-        // Chuẩn hoá dữ liệu khuôn mặt
+        // Chuẩn hoá dữ liệu trả về từ API
         let rawFaces = [];
-
         if (Array.isArray(res?.faces)) {
           rawFaces = res.faces;
         } else if (res && (res.box || res.info || res.status)) {
@@ -73,109 +76,79 @@ const WebcamPage = () => {
         }
 
         const processedFaces = rawFaces.map((face) => {
-          const info = face.info || {};
+            const info = face.info || {};
+            // Ưu tiên ảnh crop từ backend trả về để đỡ tốn sức frontend
+            const imgSrc = face.crop_image || face.imgSrc || "https://placehold.co/100x100?text=No+Image";
 
-          const mssv =
-            face.mssv ||
-            face.student_id ||
-            info.MSSV ||
-            undefined;
-
-          const name =
-            face.name ||
-            info.Ten ||
-            undefined;
-
-          const distance =
-            typeof face.distance === "number"
-              ? face.distance
-              : typeof res?.distance === "number"
-              ? res.distance
-              : face.distance;
-
-          let imgSrc = face.imgSrc || face.crop_image || face.image_url || null;
-
-          // Nếu chưa có imgSrc mà có box → crop từ canvas
-          if (!imgSrc && Array.isArray(face.box)) {
-            const [top, right, bottom, left] = face.box;
-            const width = right - left;
-            const height = bottom - top;
-
-            if (width > 0 && height > 0) {
-              const cropCanvas = document.createElement("canvas");
-              const cropCtx = cropCanvas.getContext("2d");
-              cropCanvas.width = width;
-              cropCanvas.height = height;
-
-              cropCtx.drawImage(
-                canvas,
-                left,
-                top,
-                width,
-                height,
-                0,
-                0,
-                width,
-                height
-              );
-
-              imgSrc = cropCanvas.toDataURL("image/jpeg");
-            }
-          }
-
-          return {
-            ...face,
-            info,
-            mssv,
-            name,
-            distance,
-            imgSrc,
-          };
+            return {
+              ...face,
+              mssv: face.student_id || info.MSSV || "Unknown",
+              name: face.name || info.Ten || "Unknown",
+              distance: face.distance || 0,
+              imgSrc: imgSrc,
+              box: face.box // [top, right, bottom, left]
+            };
         });
 
         setResults(processedFaces);
-
-        // Vẽ lại frame + khung
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = "#0d6efd";
-        ctx.lineWidth = 2;
-        ctx.font = "12px system-ui";
-        ctx.textBaseline = "top";
-
-        processedFaces.forEach((face) => {
-          if (!Array.isArray(face.box)) return;
-          const [top, right, bottom, left] = face.box;
-          const width = right - left;
-          const height = bottom - top;
-
-          // Vẽ khung
-          ctx.strokeRect(left, top, width, height);
-
-          const displayName = face.name || face.info?.Ten || "Unknown";
-          const displayMssv =
-            face.mssv || face.student_id || face.info?.MSSV || "";
-
-          const label =
-            displayName +
-            (displayMssv ? ` (${displayMssv})` : "");
-
-          const textX = left;
-          const textY = top - 18 < 0 ? top + 2 : top - 18;
-
-          const textWidth = ctx.measureText(label).width + 6;
-          const textHeight = 16;
-
-          ctx.fillStyle = "rgba(0,0,0,0.6)";
-          ctx.fillRect(textX, textY, textWidth, textHeight);
-
-          ctx.fillStyle = "#ffffff";
-          ctx.fillText(label, textX + 3, textY + 2);
-        });
       } catch (err) {
-        console.error(err);
+        console.error("API Error:", err);
       }
     }
   }, [running]);
+
+  // 3. Vẽ khung xanh (Overlay) mỗi khi có kết quả mới
+  useEffect(() => {
+    const canvas = overlayRef.current;
+    const video = videoRef.current;
+
+    if (!canvas || !video || video.videoWidth === 0) return;
+
+    // --- QUAN TRỌNG: Đồng bộ kích thước Canvas phủ khớp với Video ---
+    // Video hiển thị bao nhiêu thì Canvas phủ bấy nhiêu
+    if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+    }
+
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Xóa khung cũ
+
+    if (results.length === 0) return;
+
+    // Cấu hình style vẽ
+    ctx.lineWidth = 3;
+    ctx.font = "bold 18px Segoe UI, sans-serif";
+    ctx.textBaseline = "top";
+
+    results.forEach((face) => {
+      if (!Array.isArray(face.box)) return;
+      const [top, right, bottom, left] = face.box;
+      const width = right - left;
+      const height = bottom - top;
+
+      // Màu sắc: Đỏ nếu Unknown, Xanh nếu nhận diện được
+      const isUnknown = face.name === "Unknown";
+      const color = isUnknown ? "#dc3545" : "#0d6efd";
+
+      // 1. Vẽ khung
+      ctx.strokeStyle = color;
+      ctx.strokeRect(left, top, width, height);
+
+      // 2. Vẽ nền chữ
+      const label = `${face.name} (${typeof face.distance === 'number' ? face.distance.toFixed(2) : face.distance})`;
+      const textWidth = ctx.measureText(label).width + 12;
+      const textHeight = 28;
+
+      ctx.fillStyle = color;
+      ctx.fillRect(left, top - textHeight, textWidth, textHeight);
+
+      // 3. Vẽ chữ (Màu trắng, không bị ngược vì đã xóa scaleX)
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(label, left + 6, top - textHeight + 4);
+    });
+
+  }, [results]); // Vẽ lại khi data thay đổi
 
   return (
     <div className="d-flex flex-column min-vh-90 bg-dark text-light">
@@ -190,72 +163,80 @@ const WebcamPage = () => {
           </div>
 
           <div className="row g-4">
-            {/* Khung webcam – TĂNG LÊN col-lg-8 */}
+            {/* Khung webcam – col-lg-8 */}
             <div className="col-lg-8">
               <div className="card bg-dark border-secondary">
-                <div className="card-body">
-                  <h5 className="card-title mb-3 text-light">Live Camera</h5>
+                <div className="card-body p-2">
+                  <h5 className="card-title mb-3 text-light px-2 pt-2">Live Camera</h5>
 
-                  <div className="mb-3 text-center position-relative">
+                  {/* WRAPPER QUAN TRỌNG:
+                      - position-relative: Để canvas nằm đè lên video
+                      - w-100: Chiếm hết chiều ngang cột
+                      - lineHeight: 0 để xóa khoảng trắng thừa dưới video
+                   */}
+                  <div className="position-relative w-100 bg-black rounded overflow-hidden" style={{ lineHeight: 0 }}>
+                    
+                    {/* LAYER 1: VIDEO (Hiển thị mượt) */}
                     <video
                       ref={videoRef}
                       autoPlay
-                      style={{ display: "none" }}
+                      playsInline
+                      muted // Mute để tránh lỗi auto-play policy
+                      style={{
+                        width: "100%",      // Co giãn theo khung cha
+                        height: "auto",     // Tự động theo tỷ lệ aspect ratio
+                        display: "block",
+                        // KHÔNG CÓ transform: scaleX(-1) -> Hiển thị đúng chiều
+                      }}
                     />
 
+                    {/* LAYER 2: CANVAS (Vẽ khung, Trong suốt) */}
                     <canvas
-                      ref={canvasRef}
-                      className="border border-secondary rounded w-100"
+                      ref={overlayRef}
                       style={{
-                        height: "480px",
-                        maxHeight: "70vh",
-                        backgroundColor: "#000",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",      // Phủ kín video
+                        height: "100%",
+                        pointerEvents: "none", // Để chuột click xuyên qua được (nếu cần)
                       }}
                     />
                   </div>
 
-                  <div className="d-flex gap-2">
+                  {/* Nút điều khiển */}
+                  <div className="d-flex gap-2 mt-3 px-2 pb-2 align-items-center">
                     <button
                       type="button"
-                      className={`btn btn-sm rounded-pill ${
+                      className={`btn btn-sm rounded-pill fw-semibold ${
                         running ? "btn-outline-warning" : "btn-success"
                       }`}
                       onClick={() => setRunning((prev) => !prev)}
                     >
-                      {running ? "Tạm dừng gửi frame" : "Tiếp tục nhận diện"}
+                      {running ? "Tạm dừng gửi frame" : "Tiếp tục gửi frame"}
                     </button>
+                    
+                    <p className="small mb-0 text-light ms-auto" style={{ opacity: 0.6 }}>
+                       {results.length > 0 ? `Phát hiện: ${results.length} người` : "Đang chờ..."}
+                    </p>
                   </div>
-
-                  <p
-                    className="small mt-2 mb-0 text-light"
-                    style={{ opacity: 0.6 }}
-                  >
-                    * Khoảng mỗi 0.8 giây sẽ gửi một frame lên server. Tốc độ
-                    thực tế phụ thuộc cấu hình backend và mạng.
-                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Kết quả FaceBox – GIẢM còn col-lg-4 */}
+            {/* Kết quả FaceBox – col-lg-4 */}
             <div className="col-lg-4">
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h5 className="mb-0 text-light">Kết quả hiện tại</h5>
-                <span className="small text-light" style={{ opacity: 0.7 }}>
-                  {results.length > 0
-                    ? `${results.length} khuôn mặt trong khung hình`
-                    : "Chưa có khuôn mặt nào"}
-                </span>
               </div>
 
               {results.length === 0 && (
                 <div className="alert alert-secondary py-2 small mb-3">
-                  Chưa nhận diện được khuôn mặt nào. Hãy nhìn thẳng vào camera,
-                  đứng gần hơn và đảm bảo ánh sáng đủ rõ.
+                  Chưa nhận diện được khuôn mặt nào. Hãy nhìn thẳng vào camera.
                 </div>
               )}
 
-              <div className="row g-3">
+              <div className="row g-3" style={{maxHeight: '70vh', overflowY: 'auto'}}>
                 {results.map((face, index) => (
                   <div key={index} className="col-12">
                     <FaceBox face={face} />
