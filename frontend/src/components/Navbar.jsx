@@ -32,7 +32,7 @@ const Navbar = () => {
             src={logoImg}
             alt="logo"
             className="me-2"
-            style={{ width: 64, height: 32 }}
+            style={{ width: 42, height: 42 }}
           />
           <div className="d-flex flex-column lh-1">
             <span className="small text-uppercase fw-semibold text-info">HNSW</span>
