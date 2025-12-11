@@ -265,7 +265,19 @@ def search_by_base64():
         print(f"[ERROR] Loi realtime: {e}")
         return jsonify({"error": str(e)}), 500
 
-
+@app.route("/", methods=["GET", "HEAD"])
+def health_check():
+    """
+    Endpoint kiểm tra trạng thái Server.
+    - HEAD: Trả về HTTP 200 OK (không có body) -> Dùng để check 'Server có sống không?'.
+    - GET: Trả về JSON thông báo trạng thái -> Dùng để debug.
+    """
+    
+    return jsonify({
+        "status": "online", 
+        "service": "Face Recognition Server",
+        "methods": ["hnsw", "bruteforce"]
+    }), 200
 # --- CHẠY APP ---
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
