@@ -2,16 +2,33 @@ version: 1.0
 runtime: python3
 build:
   commands:
-    # 1. Install system dependencies via yum (Amazon Linux 2 equivalent of apt)
+    # 1. Cài đặt các gói hệ thống (Amazon Linux equivalents của apt-get)
     pre-build:
-      - yum install -y cmake gcc-c++ make openblas-devel lapack-devel libX11-devel gtk3-devel
+      - yum install -y cmake gcc-c++ make openblas-devel lapack-devel libX11-devel gtk3-devel mesa-libGL
+    
     build:
+      # 2. Fix lỗi RAM khi compile dlib
       - export CMAKE_BUILD_PARALLEL_LEVEL=1
-      - pip install --no-cache-dir --upgrade pip
-      - pip install --no-cache-dir face-recognition
+      
+      # 3. Cài face-recognition trước (nặng nhất)
+      - pip install --upgrade pip
+      - pip install scikit-build
+      - pip install face-recognition
+      
+      # 4. Cài requirements (Lưu ý: ta trỏ thẳng vào file trong folder backend)
       - pip install -r backend/requirements.txt
+      
+      # 5. Cài đặt thư viện HNSW local của bạn (Step 8 trong Dockerfile)
+      # Đây là bước tôi đã thiếu ở câu trả lời trước
       - pip install ./backend/hnswlib
+
 run:
-  command: python backend/app.py
+  # 6. Step 9 & 10: Chuyển vào backend rồi mới chạy app
+  # Lệnh này tương đương với: WORKDIR /app/backend && CMD ["python", "app.py"]
+  command: cd backend && python app.py
+  
   network:
     port: 8000
+  env:
+    - name: MONGO_URI
+      value: "mongodb+srv://data_team:ktmt@facereccluster.hjfd7ad.mongodb.net/?retryWrites=true&w=majority&appName=FaceRecCluster"
