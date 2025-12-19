@@ -1,0 +1,17 @@
+version: 1.0
+runtime: python3
+build:
+  commands:
+    # 1. Install system dependencies via yum (Amazon Linux 2 equivalent of apt)
+    pre-build:
+      - yum install -y cmake gcc-c++ make openblas-devel lapack-devel libX11-devel gtk3-devel
+    build:
+      - export CMAKE_BUILD_PARALLEL_LEVEL=1
+      - pip install --no-cache-dir --upgrade pip
+      - pip install --no-cache-dir face-recognition
+      - pip install -r backend/requirements.txt
+      - pip install ./backend/hnswlib
+run:
+  command: python backend/app.py
+  network:
+    port: 8000
